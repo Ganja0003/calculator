@@ -11,13 +11,86 @@ document.addEventListener("DOMContentLoaded", function(){
     let operators = document.querySelectorAll(".operator");
 
     let previousScreen = document.querySelector(".previous");
-    let CurrentScreen = document.querySelector(".current");
+    let currentScreen = document.querySelector(".current");
 
     numbers.forEach((number) => number.addEventListener("click", function(e){
         handleNumber(e.target.textContent)
+        currentScreen.textContent = currentValue;
     }))
 
+    operators.forEach((op) => op.addEventListener("click",function(e){
+        handleOperator(e.target.textContent)
+        previousScreen.textContent = previousValue + "" + operator;
+        currentScreen.textContent = currentValue;
+    }))
+
+
+
+    equal.addEventListener("click",function(){
+        if(currentValue != '' && previousValue != ''){
+            calculate();
+        previousScreen.textContent = '';
+        if (previousValue.length <= 5){
+            currentScreen.textContent = previousValue;
+        }else{
+            currentScreen.textContent = previousValue.slice(0,5) + "...";
+        }
+        }
+        
+    })
+
+    decimal.addEventListener("click", function(){
+        addDecimal();
+    })
+
 function handleNumber(num){
-    console.log(num);
+    if (currentValue.length <= 5){
+        currentValue += num;
+    }
 }
+
+function handleOperator(op){
+    operator = op;
+    previousValue = currentValue;
+    currentValue = "";
+}
+
+
+clear.addEventListener("click",()=>{
+    currentValue = "";
+    previousValue = "";
+    operator = "";
+    previousScreen.textContent = currentValue;
+    currentScreen.textContent = currentValue;
+})
+
+
+function calculate(){
+    previousValue = Number(previousValue);
+    currentValue = Number(currentValue);
+    if(operator == '+' ){
+        previousValue += currentValue;
+    }else if(operator == '-'){
+        previousValue -= currentValue;
+    }else if(operator == '*'){
+        previousValue *= currentValue;
+    }else{
+        previousValue /= currentValue;
+    }
+    previousValue = roundNum(previousValue);
+    previousValue = previousValue.toString();
+    currentValue= previousValue.toString();
+}
+
+function roundNum(num){
+    return Math.round(num*1000)/1000;
+}
+
+function addDecimal(){
+    if(!currentValue.includes('.')){
+        currentValue += '.';
+    }
+}
+
+
 })
